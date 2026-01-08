@@ -4,113 +4,77 @@ import requests
 import sys
 
 """
-Addis Ababa Traffic Map Generator
----------------------------------
-This script automates the creation of a digital twin for the simulation.
-It performs three main steps:
-1. Downloads raw geographic data (OSM) for the Bole/Meskel corridor.
-2. Converts raw data into a graph network (Nodes/Edges) for vehicles.
-3. Generates 3D polygons for building visualization.
+Addis Ababa Traffic Map Generator (V2.1 - Automated)
+----------------------------------------------------
+This script builds the Digital Twin environment.
+It handles:
+1. Downloading raw OSM data for Bole/Meskel Square.
+2. Compiling the SUMO Network topology (.net.xml).
+3. Generating 3D Building geometry (.poly.xml).
+4. Generating dynamic Traffic Demand (Cars/Buses) automatically.
 """
 
 # --- CONFIGURATION ---
-# Coordinates for Addis Ababa (Bole Road Corridor)
-# Format: [min_longitude, min_latitude, max_longitude, max_latitude]
-# Verified via OpenStreetMap Export Tool.
+# Coordinates: Bole Road Corridor
 BBOX = "38.760,8.995,38.780,9.015"
 
-# File Paths
+# Paths
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(os.path.dirname(CURRENT_DIR))
 SIM_DIR = os.path.join(PROJECT_ROOT, "src", "simulation")
 
 # Output Files
-OSM_FILE = os.path.join(SIM_DIR, "addis_raw.osm")  # Raw download
-NET_FILE = os.path.join(SIM_DIR, "osm.net.xml")  # Drivable road network
-POLY_FILE = os.path.join(SIM_DIR, "osm.poly.xml")  # 3D Buildings
+OSM_FILE = os.path.join(SIM_DIR, "addis_raw.osm")
+NET_FILE = os.path.join(SIM_DIR, "osm.net.xml")
+POLY_FILE = os.path.join(SIM_DIR, "osm.poly.xml")
 
 
 def download_osm_data():
-    """
-    Connects to the OpenStreetMap API to fetch the latest map data.
-    """
+    """Fetches raw geographic data from OpenStreetMap API."""
     print(f"🌍 Connecting to OpenStreetMap API...")
-    print(f"📍 Target Zone: Bole/Meskel Corridor ({BBOX})")
-
     url = f"https://api.openstreetmap.org/api/0.6/map?bbox={BBOX}"
-
     try:
         response = requests.get(url, timeout=30)
-        response.raise_for_status()  # Check for HTTP errors (e.g., 404, 500)
-
-        # Write binary data to disk
+        response.raise_for_status()
         with open(OSM_FILE, "wb") as f:
             f.write(response.content)
-        print("✅ Download successful. Raw data saved.")
-
-    except requests.exceptions.RequestException as e:
-        print(f"❌ Network Error: Failed to download map data.\nDetails: {e}")
+        print("✅ Map Data Downloaded.")
+    except Exception as e:
+        print(f"❌ Network Error: {e}")
         sys.exit(1)
 
 
 def build_network():
-    """
-    Uses SUMO binaries (netconvert, polyconvert) to compile the raw data.
-    """
-    print("🚧 Initializing SUMO Network Compiler...")
-
-    # Locate SUMO binaries from the environment variable
+    """Compiles the raw map into a drivable SUMO network."""
+    print("🚧 Compiling SUMO Network...")
     try:
         import sumo
 
         sumo_home = sumo.SUMO_HOME
-        netconvert_bin = os.path.join(sumo_home, "bin", "netconvert")
-        polyconvert_bin = os.path.join(sumo_home, "bin", "polyconvert")
-        typemap_file = os.path.join(
-            sumo_home, "data", "typemap", "osmPolyconvert.typ.xml"
-        )
+        netconvert = os.path.join(sumo_home, "bin", "netconvert")
+        polyconvert = os.path.join(sumo_home, "bin", "polyconvert")
+        typemap = os.path.join(sumo_home, "data", "typemap", "osmPolyconvert.typ.xml")
     except ImportError:
-        print("❌ Error: SUMO python module not found. Is your venv active?")
-        sys.exit(1)
+        sys.exit("❌ SUMO python module not found.")
 
-    # --- Step 1: Netconvert (Roads) ---
-    # We remove 'geometry' to simplify curved roads into straight segments for performance.
-    # We enable 'tls.guess' to automatically place traffic lights at major intersections.
+    # Netconvert: Build Roads
     cmd_net = [
-        netconvert_bin,
+        netconvert,
         "--osm-files",
         OSM_FILE,
         "--output-file",
         NET_FILE,
         "--geometry.remove",
         "true",
-        "--roundabouts.guess",
-        "true",
-        "--ramps.guess",
-        "true",
-        "--junctions.join",
-        "true",
         "--tls.guess",
-        "true",
-        "--tls.join",
         "true",
         "--verbose",
         "false",
     ]
 
-    try:
-        subprocess.run(
-            cmd_net, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT
-        )
-        print("✅ Road Network (.net.xml) generated successfully.")
-    except subprocess.CalledProcessError:
-        print("❌ Critical Error: netconvert failed to build the network.")
-        sys.exit(1)
-
-    # --- Step 2: Polyconvert (Buildings) ---
-    # This extracts building footprints to make the simulation look realistic.
+    # Polyconvert: Build Buildings
     cmd_poly = [
-        polyconvert_bin,
+        polyconvert,
         "--osm-files",
         OSM_FILE,
         "--net-file",
@@ -118,35 +82,31 @@ def build_network():
         "--output-file",
         POLY_FILE,
         "--type-file",
-        typemap_file,
+        typemap,
     ]
 
-    try:
-        subprocess.run(
-            cmd_poly, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT
-        )
-        print("✅ 3D Scenery (.poly.xml) generated successfully.")
-    except subprocess.CalledProcessError:
-        print("⚠️ Warning: Failed to generate buildings (Simulation will still work).")
+    subprocess.run(cmd_net, check=True, stdout=subprocess.DEVNULL)
+    subprocess.run(cmd_poly, check=False, stdout=subprocess.DEVNULL)
+    print("✅ Network & Scenery Built.")
 
 
 def generate_traffic():
     """
-    Calls SUMO's randomTrips.py to generate traffic demand automatically.
+    Generates random traffic trips.
+    - Cars: Stop at 1800s to allow traffic to clear (Bell Curve data).
+    - Buses: Run continuously.
     """
-    print("🚗 Generating Random Traffic Demand...")
-
+    print("🚗 Generating Traffic Demand...")
     try:
         import sumo
 
-        sumo_home = sumo.SUMO_HOME
-        random_trips = os.path.join(sumo_home, "tools", "randomTrips.py")
+        random_trips = os.path.join(sumo.SUMO_HOME, "tools", "randomTrips.py")
     except:
         random_trips = os.path.join(
             os.environ.get("SUMO_HOME"), "tools", "randomTrips.py"
         )
 
-    # 1. Passenger Cars
+    # FIX: Removed "true" after --validate to prevent argparse error
     cmd_cars = [
         "python",
         random_trips,
@@ -155,13 +115,12 @@ def generate_traffic():
         "-o",
         os.path.join(SIM_DIR, "osm.passenger.trips.xml"),
         "-e",
-        "3600",
+        "1800",  # Stop halfway to let traffic clear
         "-p",
-        "1.0",
+        "1.5",  # High density
         "--validate",
     ]
 
-    # 2. Buses
     cmd_buses = [
         "python",
         random_trips,
@@ -182,14 +141,12 @@ def generate_traffic():
 
     subprocess.run(cmd_cars, check=True)
     subprocess.run(cmd_buses, check=True)
-    print("✅ Traffic demand generated.")
+    print("✅ Traffic Demand Generated.")
 
 
 if __name__ == "__main__":
-    # Ensure the simulation directory exists
     os.makedirs(SIM_DIR, exist_ok=True)
-
     download_osm_data()
     build_network()
     generate_traffic()
-    print("\n🎉 Digital Twin Construction Complete.")
+    print("\n🎉 Digital Twin Environment Ready.")

@@ -8,14 +8,14 @@ import os
 import sys
 
 """
-Addis Ababa Traffic AI (Predictor Module)
------------------------------------------
-This script trains a Machine Learning model to predict future traffic density.
+Addis Ababa Traffic AI (Predictor Module V2)
+--------------------------------------------
+Trains a Machine Learning model to predict future traffic density.
 
-Methodology:
-- Algorithm: Random Forest Regressor (Good for non-linear traffic patterns).
-- Input (Features): Traffic density and speed from the past (Lag features).
-- Output (Target): Traffic density 5 minutes into the future.
+Key Logic Updates:
+1. Temporal Awareness: Added 'step' (Time) as a feature.
+   - Traffic is time-dependent. 100 cars at 9 AM != 100 cars at 9 PM.
+2. Lag Features: Uses past data (t-1, t-5) to detect trends (rising vs falling).
 """
 
 # --- PATHS ---
@@ -28,65 +28,67 @@ MODEL_FILE = os.path.join(PROJECT_ROOT, "data", "models", "traffic_model.pkl")
 def train_brain():
     print("🧠 Initializing AI Training Protocol...")
 
-    # 1. Load Data
     if not os.path.exists(DATA_FILE):
-        print("❌ Error: No training data found.")
+        print("❌ Error: No data found. Run the simulation first!")
         sys.exit(1)
 
     df = pd.read_csv(DATA_FILE)
-    print(f"📊 Loaded {len(df)} data points.")
+    print(f"📊 Loaded {len(df)} data points from simulation logs.")
 
-    # 2. Feature Engineering (The "Memory")
-    # We want the AI to look at the past to predict the future.
-    # Prediction Horizon: 5 minutes (300 seconds -> 300 steps)
+    # --- FEATURE ENGINEERING ---
+    # Prediction Horizon: 5 minutes (300 seconds)
     HORIZON = 300
 
-    # Create the 'Target': What will vehicle_count be in 300 steps?
-    df["target_future_density"] = df["vehicle_count"].shift(-HORIZON)
+    # Target: The future vehicle count
+    df["target"] = df["vehicle_count"].shift(-HORIZON)
 
-    # Create 'Features': What was traffic like recently?
-    # Lag 1: Traffic 1 minute ago
+    # Lag Features: The "Short Term Memory" of the AI
     df["lag_1min"] = df["vehicle_count"].shift(60)
-    # Lag 5: Traffic 5 minutes ago
     df["lag_5min"] = df["vehicle_count"].shift(300)
 
-    # Drop rows with NaN (empty data created by shifting)
+    # Clean up empty rows created by shifting
     df_clean = df.dropna()
 
-    # Define Input (X) and Output (y)
-    # We use current count, speed, and past counts to predict future.
-    X = df_clean[["vehicle_count", "avg_speed", "lag_1min", "lag_5min"]]
-    y = df_clean["target_future_density"]
+    # INPUT FEATURES (X):
+    # 1. step: The time of day (Crucial for learning cycles)
+    # 2. vehicle_count: Current load
+    # 3. avg_speed: Is traffic moving or stopped?
+    # 4. lag_1min: Was it lower or higher a minute ago? (Trend detection)
+    # 5. lag_5min: Contextual history
+    X = df_clean[["step", "vehicle_count", "avg_speed", "lag_1min", "lag_5min"]]
+    y = df_clean["target"]
 
-    print(f"📉 Training data shape after cleaning: {X.shape}")
-
-    # 3. Split Data (Train vs Test)
-    # 80% for training, 20% for testing
+    # --- TRAINING ---
+    # We use random shuffle because we only have one simulation run.
+    # In a production environment with multiple days of data, we would split chronologically.
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42, shuffle=True
     )
 
-    # 4. Train the Model (Random Forest)
-    print("🏋️  Training Random Forest Model (Estimators=100)...")
+    print("🏋️  Training Random Forest (Spatial + Temporal)...")
     model = RandomForestRegressor(n_estimators=100, random_state=42, n_jobs=-1)
     model.fit(X_train, y_train)
 
-    # 5. Evaluate
+    # --- EVALUATION ---
     predictions = model.predict(X_test)
-    mse = mean_squared_error(y_test, predictions)
     r2 = r2_score(y_test, predictions)
+    mse = mean_squared_error(y_test, predictions)
 
-    print("-" * 30)
+    print("-" * 35)
     print(f"🏆 AI PERFORMANCE REPORT")
-    print(f"   Target: Predict traffic {HORIZON} seconds ahead")
-    print(f"   Accuracy (R² Score): {r2:.4f} (1.0 is perfect)")
-    print(f"   Error Margin (MSE): {mse:.2f}")
-    print("-" * 30)
+    print(f"   Model: Random Forest (v2)")
+    print(f"   Prediction Horizon: {HORIZON} seconds")
+    print(f"   Accuracy (R² Score): {r2:.4f}")
+    print(f"   Mean Squared Error: {mse:.2f}")
+    print("-" * 35)
 
-    # 6. Save the Brain
+    if r2 < 0.6:
+        print("⚠️  WARNING: Model accuracy is low. Check simulation data quality.")
+
+    # Save
     os.makedirs(os.path.dirname(MODEL_FILE), exist_ok=True)
     joblib.dump(model, MODEL_FILE)
-    print(f"💾 Model saved to: {MODEL_FILE}")
+    print(f"💾 Trained Brain saved to: {MODEL_FILE}")
 
 
 if __name__ == "__main__":
