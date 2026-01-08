@@ -1,3 +1,10 @@
-*.log
+
 __pycache__/
-*.xml.gz
+*.pyc
+venv/
+*.log
+*.xml
+data/raw/*.csv
+data/processed/*.png
+!data/raw/.gitkeep
+
