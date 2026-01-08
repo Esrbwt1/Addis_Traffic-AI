@@ -130,10 +130,71 @@ def build_network():
         print("⚠️ Warning: Failed to generate buildings (Simulation will still work).")
 
 
+def generate_traffic():
+    """
+    Calls SUMO's randomTrips.py to generate traffic demand automatically.
+    """
+    print("🚗 Generating Random Traffic Demand...")
+
+    # Locate randomTrips.py
+    try:
+        import sumo
+
+        sumo_home = sumo.SUMO_HOME
+        random_trips = os.path.join(sumo_home, "tools", "randomTrips.py")
+    except:
+        # Fallback if python module isn't perfect, assume env var
+        random_trips = os.path.join(
+            os.environ.get("SUMO_HOME"), "tools", "randomTrips.py"
+        )
+
+    # 1. Passenger Cars
+    cmd_cars = [
+        "python",
+        random_trips,
+        "-n",
+        NET_FILE,
+        "-o",
+        os.path.join(SIM_DIR, "osm.passenger.trips.xml"),
+        "-e",
+        "3600",
+        "-p",
+        "1.0",
+        "--validate",
+        "true",
+    ]
+
+    # 2. Buses
+    cmd_buses = [
+        "python",
+        random_trips,
+        "-n",
+        NET_FILE,
+        "-o",
+        os.path.join(SIM_DIR, "osm.bus.trips.xml"),
+        "-e",
+        "3600",
+        "-p",
+        "60.0",
+        "--vehicle-class",
+        "bus",
+        "--prefix",
+        "bus",
+        "--validate",
+        "true",
+    ]
+
+    subprocess.run(cmd_cars, check=True)
+    subprocess.run(cmd_buses, check=True)
+    print("✅ Traffic demand generated.")
+
+
 if __name__ == "__main__":
     # Ensure the simulation directory exists
     os.makedirs(SIM_DIR, exist_ok=True)
 
     download_osm_data()
     build_network()
+    generate_traffic()
+
     print("\n🎉 Digital Twin Construction Complete.")
