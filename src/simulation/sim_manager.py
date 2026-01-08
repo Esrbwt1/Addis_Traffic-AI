@@ -76,17 +76,24 @@ class AddisTrafficBrain:
             # Threshold: If more than 10 cars are waiting, traffic is building up.
             if max_queue_length > 10:
                 # Get current timer details
-                current_phase_duration = traci.trafficlight.getPhaseDuration(tls_id)
+                current_state = traci.trafficlight.getRedYellowGreenState(tls_id)
 
                 # Action: Add 10 seconds to the current green light
                 # This helps flush out the queue.
                 traci.trafficlight.setPhaseDuration(tls_id, current_phase_duration + 10)
 
-                # Log the action periodically so we don't spam the terminal
-                if self.step % 100 == 0:
-                    print(
-                        f"🚦 Intervention at {tls_id}: Queue={max_queue_length}, Extended Green."
+                # ONLY extend if the light is currently Green!
+                if "G" in current_state or "g" in current_state:
+                    current_phase_duration = traci.trafficlight.getPhaseDuration(tls_id)
+                    traci.trafficlight.setPhaseDuration(
+                        tls_id, current_phase_duration + 10
                     )
+
+                    # Log the action periodically so we don't spam the terminal
+                    if self.step % 100 == 0:
+                        print(
+                            f"🚦 Intervention at {tls_id}: Queue={max_queue_length}, Extending Green."
+                        )
 
     def collect_data(self):
         """
