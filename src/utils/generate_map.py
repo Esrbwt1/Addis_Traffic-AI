@@ -159,7 +159,6 @@ def generate_traffic():
         "-p",
         "1.0",
         "--validate",
-        "true",
     ]
 
     # 2. Buses
@@ -179,7 +178,6 @@ def generate_traffic():
         "--prefix",
         "bus",
         "--validate",
-        "true",
     ]
 
     subprocess.run(cmd_cars, check=True)
