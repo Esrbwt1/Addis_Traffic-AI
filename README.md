@@ -36,12 +36,22 @@ Addis_Traffic-AI/
 
 ## 🚀 Installation & Usage
 
-### 1. Prerequisites
-*   Python 3.10+
-*   SUMO Simulation Engine (`sudo pacman -S sumo` or via pip)
+### ⚠️ Important: Model Setup
+To keep the repository lightweight, the pre-trained model is not included. 
+**You must run the training pipeline once to generate it:**
+
+```bash
+# 1. Generate Synthetic Training Data (30 Days)
+python src/utils/generate_synthetic_data.py
+
+# 2. Train the AI Model
+python src/ai/traffic_predictor.py
+
+# 3. Launch the Dashboard
+python src/app.py
 
 ### 2. Setup
-```bash
+
 # Create environment
 python -m venv venv
 source venv/bin/activate
