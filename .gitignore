@@ -8,3 +8,4 @@ data/raw/*.csv
 data/processed/*.png
 !data/raw/.gitkeep
 
+data/models/*.pkl
