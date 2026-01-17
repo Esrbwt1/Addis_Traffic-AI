@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<osm version="0.6" generator="openstreetmap-cgimap 2.1.0 (4185779 spike-07.openstreetmap.org)" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+<osm version="0.6" generator="openstreetmap-cgimap 2.1.0 (3589672 spike-07.openstreetmap.org)" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
  <bounds minlat="8.9950000" minlon="38.7600000" maxlat="9.0150000" maxlon="38.7800000"/>
  <node id="29706012" visible="true" version="5" changeset="90102514" timestamp="2020-08-28T23:07:47Z" user="user_5576" uid="5576" lat="9.0122698" lon="38.7774339"/>
  <node id="29706015" visible="true" version="7" changeset="60969643" timestamp="2018-07-23T05:22:33Z" user="chan_man" uid="7918455" lat="9.0100697" lon="38.7727786"/>
@@ -14930,6 +14930,19 @@
  <node id="13433891341" visible="true" version="1" changeset="176888613" timestamp="2026-01-06T06:06:30Z" user="PripetRiver" uid="19636659" lat="9.0084451" lon="38.7790574"/>
  <node id="13433891342" visible="true" version="1" changeset="176888613" timestamp="2026-01-06T06:06:30Z" user="PripetRiver" uid="19636659" lat="9.0084948" lon="38.7790353"/>
  <node id="13433891343" visible="true" version="1" changeset="176888613" timestamp="2026-01-06T06:06:30Z" user="PripetRiver" uid="19636659" lat="9.0097372" lon="38.7787148"/>
+ <node id="13441807401" visible="true" version="1" changeset="177010987" timestamp="2026-01-09T06:17:22Z" user="OpenWorlder" uid="22652236" lat="9.0123946" lon="38.7690956">
+  <tag k="amenity" v="post_office"/>
+  <tag k="name" v="FedEx"/>
+ </node>
+ <node id="13441818901" visible="true" version="1" changeset="177011205" timestamp="2026-01-09T06:27:20Z" user="OpenWorlder" uid="22652236" lat="9.0115592" lon="38.7679733">
+  <tag k="amenity" v="cafe"/>
+  <tag k="cuisine" v="french"/>
+  <tag k="name" v="The Blue Hen"/>
+  <tag k="name:am" v="ዘ ብሉ ሄን"/>
+  <tag k="opening_hours" v="Mo-Sa 08:00-21:00; Su 08:00-19:00"/>
+  <tag k="outdoor_seating" v="yes"/>
+  <tag k="phone" v="+251 99 172 1626"/>
+ </node>
  <way id="24254768" visible="true" version="4" changeset="160048156" timestamp="2024-12-08T08:02:23Z" user="Edward" uid="364">
   <nd ref="262607539"/>
   <nd ref="262607540"/>
@@ -16409,7 +16422,7 @@
   <tag k="oneway" v="yes"/>
   <tag k="surface" v="paved"/>
  </way>
- <way id="35969434" visible="true" version="21" changeset="136116795" timestamp="2023-05-15T09:23:49Z" user="Mintesnot yesmashewa" uid="19168027">
+ <way id="35969434" visible="true" version="22" changeset="177122136" timestamp="2026-01-12T05:25:13Z" user="Jitaddis" uid="23651796">
   <nd ref="420432170"/>
   <nd ref="5448398728"/>
   <nd ref="422181664"/>
@@ -16439,6 +16452,7 @@
   <tag k="name:am" v="ኬፕ ቨርዴ መንገድ"/>
   <tag k="oneway" v="yes"/>
   <tag k="source" v="GPS Data"/>
+  <tag k="surface" v="asphalt"/>
  </way>
  <way id="35970815" visible="true" version="11" changeset="138344924" timestamp="2023-07-10T16:21:33Z" user="Alazar-AddisMap" uid="141373">
   <nd ref="4881897065"/>
@@ -16691,7 +16705,7 @@
   <nd ref="60780721"/>
   <tag k="highway" v="residential"/>
  </way>
- <way id="36159188" visible="true" version="4" changeset="138344924" timestamp="2023-07-10T16:21:33Z" user="Alazar-AddisMap" uid="141373">
+ <way id="36159188" visible="true" version="5" changeset="177122136" timestamp="2026-01-12T05:25:13Z" user="Jitaddis" uid="23651796">
   <nd ref="422181644"/>
   <nd ref="5456298700"/>
   <nd ref="5456298699"/>
@@ -16700,6 +16714,7 @@
   <nd ref="422181664"/>
   <tag k="highway" v="primary_link"/>
   <tag k="oneway" v="yes"/>
+  <tag k="surface" v="asphalt"/>
  </way>
  <way id="36237372" visible="true" version="7" changeset="138344924" timestamp="2023-07-10T16:21:33Z" user="Alazar-AddisMap" uid="141373">
   <nd ref="422885182"/>
@@ -21775,7 +21790,7 @@
   <tag k="highway" v="residential"/>
   <tag k="surface" v="unpaved"/>
  </way>
- <way id="160456975" visible="true" version="11" changeset="136116795" timestamp="2023-05-15T09:23:49Z" user="Mintesnot yesmashewa" uid="19168027">
+ <way id="160456975" visible="true" version="12" changeset="177122136" timestamp="2026-01-12T05:25:12Z" user="Jitaddis" uid="23651796">
   <nd ref="5472685754"/>
   <nd ref="5472663633"/>
   <nd ref="5778311504"/>
@@ -21810,6 +21825,7 @@
   <tag k="name:am" v="ኬፕ ቨርዴ መንገድ"/>
   <tag k="oneway" v="yes"/>
   <tag k="source" v="GPS Data"/>
+  <tag k="surface" v="asphalt"/>
  </way>
  <way id="160623176" visible="true" version="4" changeset="52816486" timestamp="2017-10-11T08:51:57Z" user="teddyumd" uid="1211619">
   <nd ref="1726739747"/>
@@ -25971,7 +25987,7 @@
   <tag k="building:levels" v="1"/>
   <tag k="building:part" v="yes"/>
  </way>
- <way id="323806948" visible="true" version="15" changeset="78384023" timestamp="2019-12-13T16:13:54Z" user="Alazar-AddisMap" uid="141373">
+ <way id="323806948" visible="true" version="16" changeset="177122136" timestamp="2026-01-12T05:31:10Z" user="Jitaddis" uid="23651796">
   <nd ref="773653576"/>
   <nd ref="5174664284"/>
   <nd ref="271899404"/>
@@ -25994,6 +26010,7 @@
   <tag k="name" v="Guinea Conakry Street"/>
   <tag k="name:am" v="ጊኒ ኮናክሬ መንገድ"/>
   <tag k="oneway" v="yes"/>
+  <tag k="surface" v="asphalt"/>
  </way>
  <way id="323806949" visible="true" version="16" changeset="164812326" timestamp="2025-04-11T11:53:58Z" user="Claudius Henrichs" uid="18069">
   <nd ref="3305830999"/>
@@ -26475,7 +26492,7 @@
   <nd ref="5557030951"/>
   <tag k="barrier" v="wall"/>
  </way>
- <way id="383501390" visible="true" version="1" changeset="35653384" timestamp="2015-11-29T19:30:55Z" user="Jeanot" uid="2677304">
+ <way id="383501390" visible="true" version="2" changeset="177122135" timestamp="2026-01-12T05:25:11Z" user="Jitaddis" uid="23651796">
   <nd ref="3867872375"/>
   <nd ref="3867872408"/>
   <nd ref="3867872376"/>
@@ -26484,6 +26501,7 @@
   <nd ref="3867872375"/>
   <tag k="access" v="customers"/>
   <tag k="amenity" v="parking"/>
+  <tag k="parking" v="surface"/>
   <tag k="surface" v="paved"/>
  </way>
  <way id="383501391" visible="true" version="1" changeset="35653384" timestamp="2015-11-29T19:30:55Z" user="Jeanot" uid="2677304">
@@ -27319,7 +27337,7 @@
   <tag k="name:am" v="ኃይሌ ገ/ሥላሴ ጎዳና"/>
   <tag k="oneway" v="yes"/>
  </way>
- <way id="531628352" visible="true" version="2" changeset="58810827" timestamp="2018-05-09T08:08:43Z" user="icecreamfan" uid="7629876">
+ <way id="531628352" visible="true" version="3" changeset="177122136" timestamp="2026-01-12T05:25:12Z" user="Jitaddis" uid="23651796">
   <nd ref="5160391956"/>
   <nd ref="5160391957"/>
   <nd ref="5160391958"/>
@@ -27329,6 +27347,7 @@
   <nd ref="420439020"/>
   <tag k="highway" v="primary_link"/>
   <tag k="oneway" v="yes"/>
+  <tag k="surface" v="asphalt"/>
  </way>
  <way id="531631376" visible="true" version="2" changeset="58810827" timestamp="2018-05-09T08:08:43Z" user="icecreamfan" uid="7629876">
   <nd ref="4881897058"/>
@@ -27474,7 +27493,7 @@
   <nd ref="5170724510"/>
   <tag k="highway" v="primary_link"/>
  </way>
- <way id="532882199" visible="true" version="5" changeset="116649332" timestamp="2022-01-27T06:05:41Z" user="Sekampung" uid="12653085">
+ <way id="532882199" visible="true" version="6" changeset="177122136" timestamp="2026-01-12T05:25:12Z" user="Jitaddis" uid="23651796">
   <nd ref="5170724511"/>
   <nd ref="5170724512"/>
   <nd ref="5456675878"/>
@@ -27494,6 +27513,7 @@
   <nd ref="5456942138"/>
   <nd ref="9451849927"/>
   <tag k="highway" v="residential"/>
+  <tag k="surface" v="asphalt"/>
  </way>
  <way id="532882200" visible="true" version="2" changeset="56899529" timestamp="2018-03-05T11:28:48Z" user="Brat_43" uid="7449647">
   <nd ref="553087764"/>
@@ -30808,12 +30828,11 @@
   <tag k="highway" v="primary"/>
   <tag k="oneway" v="yes"/>
  </way>
- <way id="757834002" visible="true" version="1" changeset="78732783" timestamp="2019-12-22T12:03:00Z" user="Alazar-AddisMap" uid="141373">
+ <way id="757834002" visible="true" version="2" changeset="176984584" timestamp="2026-01-08T13:21:25Z" user="LogoneRiver" uid="19895166">
   <nd ref="5736089086"/>
   <nd ref="1642556859"/>
   <nd ref="5780633525"/>
   <nd ref="2304667132"/>
-  <tag k="access" v="destination"/>
   <tag k="highway" v="primary"/>
   <tag k="horse" v="no"/>
   <tag k="lanes" v="3"/>
